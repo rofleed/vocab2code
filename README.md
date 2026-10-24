@@ -1,16 +1,9 @@
-# vocab2code
 
 简体中文 | [English](README.en.md)
 
 在 VS Code 里"写代码"背单词：每日单词被渲染成一个 TypeScript 模块，路过的人只会看到源代码。
 
-```ts
-/**
- * #01  abandon  /ə'bændən/
- */
-const abandon = phonetic("/ə'bændən/");
-// @vt  放弃, 抛弃
-```
+
 
 ## 功能
 
@@ -19,6 +12,10 @@ const abandon = phonetic("/ə'bændən/");
 - 认识的词一段时间内不再出现，不熟的词出现得更频繁
 - 支持导入自己的单词表（txt / csv / json / kajweb zip）
 - 学习进度在所有词库间共享，可选择随 VS Code 设置同步（默认关闭）
+- 支持单词、例句播放，首次播放请打开enable开关
+## 功能截图
+<img width="831" height="884" alt="image" src="https://github.com/user-attachments/assets/d48d4234-52b1-42fc-82fd-0f0cf28385eb" />
+
 
 ## 使用
 
