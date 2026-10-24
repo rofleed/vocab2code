@@ -1,0 +1,58 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "vocab2code dictionary",
+  "description": "Word -> definition lookup used to resolve string entries in vocab2code libraries.",
+  "type": "object",
+  "required": ["meta", "entries"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "meta": {
+      "type": "object",
+      "required": ["id", "schema"],
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "schema": { "type": "integer", "const": 1 },
+        "lang": { "type": "string" },
+        "defLang": { "type": "string" },
+        "count": { "type": "integer", "minimum": 0 },
+        "license": { "type": "string" },
+        "source": { "type": "string" }
+      }
+    },
+    "entries": {
+      "type": "object",
+      "description": "Keyed by word (matched case-insensitively).",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["senses"],
+        "properties": {
+          "phonetic": { "type": "string" },
+          "senses": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["definition"],
+              "properties": {
+                "pos": { "type": "string" },
+                "definition": { "type": "string" }
+              }
+            }
+          },
+          "examples": {
+            "type": "array",
+            "description": "Word-level example sentences, shown under the first sense.",
+            "items": {
+              "type": "object",
+              "required": ["en"],
+              "properties": {
+                "en": { "type": "string" },
+                "zh": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

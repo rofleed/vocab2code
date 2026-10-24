@@ -1,0 +1,31 @@
+node_modules/
+out/
+*.vsix
+.translate-cache.json
+*.dictapi-noentry.json
+
+# local credentials and environment settings
+.env
+.env.*
+!.env.example
+!.env.*.example
+.npmrc
+.aws/
+.ssh/
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa
+id_rsa.*
+id_ed25519
+id_ed25519.*
+
+# local logs and OS metadata
+*.log
+logs/
+.DS_Store
+Thumbs.db
+
+# commercial content, local use only (not redistributable)
+data/4000essential.json

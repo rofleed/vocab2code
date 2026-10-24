@@ -1,0 +1,23 @@
+# Only reviewed runtime files and documentation belong in the VSIX.
+**
+!package.json
+!out/extension.js
+!data/cet4.json
+!data/cet6.json
+!data/gaokao.json
+!data/gre.json
+!data/ielts.json
+!data/kaoyan.json
+!data/toefl.json
+!data/zhongkao.json
+!dict/ecdict.json
+!attribution/tatoeba.json
+!schema/*.json
+!README.md
+!README.en.md
+!LICENSE
+!THIRD_PARTY_NOTICES.md
+!PRIVACY.md
+!CHANGELOG.md
+!CONTRIBUTING.md
+!RELEASING.md

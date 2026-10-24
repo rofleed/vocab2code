@@ -1,0 +1,73 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "vocab2code library",
+  "description": "A vocabulary library for the vocab2code VS Code extension. A bare array of word entries (schema 0) is also accepted.",
+  "type": "object",
+  "required": ["meta", "words"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "meta": {
+      "type": "object",
+      "required": ["id", "name", "schema"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9._-]*$",
+          "description": "Unique id, used in the vocab2code.library setting. Lowercase letters, digits, '.', '_' and '-'."
+        },
+        "name": { "type": "string", "description": "Display name." },
+        "description": { "type": "string" },
+        "version": { "type": "string", "description": "Version of this library's content, e.g. 1.0.0." },
+        "schema": { "type": "integer", "const": 1, "description": "Format version of this file." },
+        "lang": { "type": "string", "description": "Language being learned, e.g. en." },
+        "defLang": { "type": "string", "description": "Language of definitions and translations, e.g. zh-CN." },
+        "count": { "type": "integer", "minimum": 0 },
+        "license": { "type": "string", "description": "License of the content, e.g. CC BY-SA 4.0." },
+        "source": { "type": "string", "description": "Where the words, definitions and examples come from." }
+      }
+    },
+    "words": {
+      "type": "array",
+      "description": "A string is a bare word resolved through the dictionary; an object is used as-is, with missing phonetic / definitions filled from the dictionary.",
+      "items": {
+        "oneOf": [
+          { "type": "string", "minLength": 1 },
+          { "$ref": "#/definitions/word" }
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "word": {
+      "type": "object",
+      "required": ["word", "senses"],
+      "properties": {
+        "word": { "type": "string", "minLength": 1 },
+        "phonetic": { "type": "string", "description": "IPA, e.g. /əˈbʌndənt/." },
+        "senses": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/sense" }
+        }
+      }
+    },
+    "sense": {
+      "type": "object",
+      "required": ["definition"],
+      "properties": {
+        "pos": { "type": "string", "description": "Part of speech, e.g. n. / v. / adj." },
+        "definition": { "type": "string" },
+        "examples": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["en"],
+            "properties": {
+              "en": { "type": "string" },
+              "zh": { "type": "string" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

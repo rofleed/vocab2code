@@ -1,0 +1,204 @@
+{
+  "name": "vocab2code",
+  "displayName": "vocab2code",
+  "description": "写代码时背单词：把每日英语单词伪装成 TypeScript 模块。Vocabulary practice disguised as code.",
+  "version": "0.9.0",
+  "publisher": "rofleed",
+  "license": "MIT",
+  "categories": [
+    "Education",
+    "Other"
+  ],
+  "keywords": [
+    "english",
+    "vocabulary",
+    "learning",
+    "ielts",
+    "toefl",
+    "cet",
+    "背单词",
+    "英语",
+    "四六级",
+    "考研"
+  ],
+  "engines": {
+    "vscode": "^1.82.0"
+  },
+  "main": "./out/extension.js",
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "vocab2code.openDaily",
+        "title": "vocab2code: Open Daily Module"
+      },
+      {
+        "command": "vocab2code.switchLibrary",
+        "title": "vocab2code: Switch Library"
+      },
+      {
+        "command": "vocab2code.importLibrary",
+        "title": "vocab2code: Import Library (txt / csv / json)"
+      },
+      {
+        "command": "vocab2code.openLibraryFolder",
+        "title": "vocab2code: Open User Library Folder"
+      },
+      {
+        "command": "vocab2code.refresh",
+        "title": "vocab2code: Refresh"
+      },
+      {
+        "command": "vocab2code.play",
+        "title": "▶ play"
+      },
+      {
+        "command": "vocab2code.markKnown",
+        "title": "✓ known"
+      },
+      {
+        "command": "vocab2code.markHard",
+        "title": "✗ hard"
+      },
+      {
+        "command": "vocab2code.unmark",
+        "title": "↺ reset"
+      },
+      {
+        "command": "vocab2code.diagnose",
+        "title": "vocab2code: Show Log"
+      },
+      {
+        "command": "vocab2code.clearAudioCache",
+        "title": "vocab2code: Clear Audio Cache"
+      },
+      {
+        "command": "vocab2code.clearLog",
+        "title": "vocab2code: Clear Log"
+      },
+      {
+        "command": "vocab2code.resetProgress",
+        "title": "vocab2code: Reset All Learning Progress"
+      }
+    ],
+    "configuration": {
+      "title": "vocab2code",
+      "properties": {
+        "vocab2code.library": {
+          "type": "string",
+          "default": "ielts",
+          "markdownDescription": "Library id. Libraries are discovered from the bundled `data/` folder, the user library folder (`vocab2code: Open User Library Folder`) and `#vocab2code.libraryPaths#`. Use `vocab2code: Switch Library` to pick one."
+        },
+        "vocab2code.libraryPaths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "markdownDescription": "Extra folders (or single `.json` files) to load libraries from. `~` expands to the home directory. On id collision these override bundled and user libraries."
+        },
+        "vocab2code.dailyCount": {
+          "type": "number",
+          "default": 20,
+          "description": "Words per day."
+        },
+        "vocab2code.knownCooldownDays": {
+          "type": "number",
+          "default": 7,
+          "description": "Days to skip a word marked as known."
+        },
+        "vocab2code.hideEmptySenses": {
+          "type": "boolean",
+          "default": false,
+          "description": "Only show the first sense plus senses that have example sentences. Useful for libraries with many example-less extra senses."
+        },
+        "vocab2code.audioAccent": {
+          "type": "string",
+          "default": "us",
+          "enum": [
+            "us",
+            "uk"
+          ],
+          "description": "TTS accent (us / uk)."
+        },
+        "vocab2code.engine": {
+          "type": "string",
+          "default": "google",
+          "enum": [
+            "google",
+            "edge"
+          ],
+          "enumDescriptions": [
+            "Google Translate TTS for sentences (single words still come from Youdao). Robotic but reliable.",
+            "Try Microsoft Edge neural voice for sentences first, fall back to Google. May be slow if Edge auth is broken."
+          ],
+          "description": "Sentence TTS backend. Words always use Youdao first."
+        },
+        "vocab2code.voice": {
+          "type": "string",
+          "default": "auto",
+          "enum": [
+            "auto",
+            "en-US-AriaNeural",
+            "en-US-GuyNeural",
+            "en-US-JennyNeural",
+            "en-US-AndrewNeural",
+            "en-US-EmmaNeural",
+            "en-GB-SoniaNeural",
+            "en-GB-RyanNeural",
+            "en-GB-LibbyNeural"
+          ],
+          "description": "Edge TTS voice. Ignored when engine=google. 'auto' picks per accent."
+        },
+        "vocab2code.audioPrefetch": {
+          "type": "boolean",
+          "default": false,
+          "scope": "application",
+          "description": "Preload audio automatically. Sends daily words and example sentences to external speech services without clicking Play. Off by default."
+        },
+        "vocab2code.syncProgress": {
+          "type": "boolean",
+          "default": false,
+          "scope": "application",
+          "description": "Include learning progress in VS Code Settings Sync when Settings Sync is enabled. Off by default."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "typecheck": "tsc -p ./ --noEmit",
+    "compile": "esbuild src/extension.ts --bundle --outfile=out/extension.js --external:vscode --format=cjs --platform=node --target=node18",
+    "watch": "esbuild src/extension.ts --bundle --outfile=out/extension.js --external:vscode --format=cjs --platform=node --watch --target=node18",
+    "vscode:prepublish": "npm run verify",
+    "test": "node --test tests/*.test.js",
+    "check:release": "node tools/check-release.js",
+    "check:vsix": "node tools/check-vsix.js",
+    "package": "vsce package --no-dependencies",
+    "verify": "npm run typecheck && npm test && npm run check:release && npm run compile"
+  },
+  "devDependencies": {
+    "@types/node": "^18.0.0",
+    "@types/vscode": "1.82.0",
+    "@types/ws": "^8.18.1",
+    "@vscode/vsce": "^3.9.1",
+    "esbuild": "^0.28.0",
+    "fzstd": "^0.1.1",
+    "sql.js": "^1.14.1",
+    "typescript": "^5.3.0"
+  },
+  "dependencies": {
+    "fflate": "^0.8.3",
+    "ws": "^8.21.0"
+  },
+  "preview": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rofleed/vocab2code.git"
+  },
+  "homepage": "https://github.com/rofleed/vocab2code#readme",
+  "bugs": {
+    "url": "https://github.com/rofleed/vocab2code/issues"
+  }
+}
