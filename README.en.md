@@ -2,17 +2,7 @@
 
 [简体中文](README.md) | English
 
-Study vocabulary while "coding" in VS Code: each day's words are rendered as a TypeScript module, so a passer-by only sees source code.
-
-```ts
-/**
- * #01  abandon  /ə'bændən/
- */
-const abandon = phonetic("/ə'bændən/");
-// @vt  放弃, 抛弃
-```
-
-Definitions and translations are in Chinese.
+Study vocabulary while "coding" in VS Code: each day's words are rendered as a TypeScript module, so a passer-by only sees source code. Definitions and translations are in Chinese.
 
 ## Features
 
@@ -21,6 +11,11 @@ Definitions and translations are in Chinese.
 - Known words are skipped for a while, hard words come up more often
 - Import your own word lists (txt / csv / json / kajweb zip)
 - Progress is shared across libraries with optional VS Code Settings Sync (off by default)
+- Word and sentence playback; click `enable()` in the audio panel the first time
+
+## Screenshot
+
+<img width="831" height="884" alt="image" src="https://github.com/user-attachments/assets/d48d4234-52b1-42fc-82fd-0f0cf28385eb" />
 
 ## Usage
 
