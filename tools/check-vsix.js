@@ -4,7 +4,7 @@ const { unzipSync, strFromU8 } = require('fflate');
 const file = process.argv[2] || `${require('../package.json').name}-${require('../package.json').version}.vsix`;
 const zip = unzipSync(fs.readFileSync(file));
 const required = [
-  'package.json', 'out/extension.js', 'dict/ecdict.json',
+  'package.json', 'out/extension.js', 'dict/ecdict.json', 'images/icon.png',
   ...['cet4', 'cet6', 'gaokao', 'gre', 'ielts', 'kaoyan', 'toefl', 'zhongkao'].map(id => `data/${id}.json`),
   'schema/dictionary.schema.json', 'schema/library.schema.json',
   'readme.md', 'README.en.md', 'LICENSE.txt', 'THIRD_PARTY_NOTICES.md', 'PRIVACY.md',

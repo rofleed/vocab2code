@@ -1,3 +1,5 @@
+<p align="center"><img src="images/icon.png" width="128" alt="vocab2code"></p>
+
 # vocab2code
 
 [简体中文](README.md) | English
