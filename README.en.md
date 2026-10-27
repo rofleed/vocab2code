@@ -1,10 +1,14 @@
-<p align="center"><img src="images/icon.png" width="128" alt="vocab2code"></p>
+<div align="center">
+
+<img src="images/icon.png" width="128" alt="vocab2code">
 
 # vocab2code
 
 [简体中文](README.md) | English
 
 Study vocabulary while "coding" in VS Code: each day's words are rendered as a TypeScript module, so a passer-by only sees source code. Definitions and translations are in Chinese.
+
+</div>
 
 ## Features
 

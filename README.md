@@ -1,10 +1,14 @@
-<p align="center"><img src="images/icon.png" width="128" alt="vocab2code"></p>
+<div align="center">
+
+<img src="images/icon.png" width="128" alt="vocab2code">
 
 # vocab2code
 
 简体中文 | [English](README.en.md)
 
 在 VS Code 里"写代码"背单词：每日单词被渲染成一个 TypeScript 模块，路过的人只会看到源代码。
+
+</div>
 
 ## 功能
 
