@@ -39,7 +39,12 @@
 | `vocab2code.dailyCount` | `20` | 每天单词数 |
 | `vocab2code.knownCooldownDays` | `7` | "认识"的词跳过几天 |
 | `vocab2code.audioAccent` | `us` | `us` 美音 / `uk` 英音 |
+| `vocab2code.engine` | `baidu` | 例句优先使用的语音服务，可选 `baidu` / `google` / `edge` |
 | `vocab2code.libraryPaths` | `[]` | 额外加载的词库目录或文件 |
+
+发音默认优先走国内线路：单词使用有道，例句使用百度翻译。有道失败后会尝试所选服务；Google 或 Edge 失败后会回退到百度，百度失败后尝试 Google。失败线路暂时跳过 30 秒，长句分段合成，音频成功下载后缓存在本地。
+
+如果之前手动设置了 Google 或 Edge，可将 `vocab2code.engine` 改为 `baidu`，减少国内网络下的等待。播放失败时执行 `vocab2code: Show Log` 查看线路、耗时和错误分类（如 HTTP 403、超时、DNS 失败）；日志不包含朗读文本。
 
 ## 导入单词表
 
@@ -52,7 +57,7 @@
 
 ## 隐私
 
-默认不预加载音频。点击播放时，未缓存的单词或句子会发送至有道、Google 翻译或 Edge 朗读的非官方接口。自动预加载和学习进度同步均需手动开启。接口可能失效；详见 [隐私说明](PRIVACY.md)，其中包含缓存、日志和进度的清除方法。
+默认不预加载音频。点击播放时，未缓存的单词或句子会发送至有道、百度翻译、Google 翻译或 Edge 朗读的非官方接口。自动预加载和学习进度同步均需手动开启。接口可能失效；详见 [隐私说明](PRIVACY.md)，其中包含缓存、日志和进度的清除方法。
 
 ## 开发与贡献
 

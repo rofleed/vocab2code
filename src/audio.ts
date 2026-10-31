@@ -68,7 +68,7 @@ export class AudioPlayer {
       const url = panel.webview.asWebviewUri(vscode.Uri.file(filePath)).toString();
       post(url, 'downloaded');
     } catch {
-      panel.webview.postMessage({ type: 'status', text: '// audio unavailable; check your connection and try again' });
+      panel.webview.postMessage({ type: 'status', text: '// audio unavailable; retry in 30s or run vocab2code: Show Log' });
     }
   }
 

@@ -3,14 +3,16 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { createHash } from 'crypto';
 import { edgeTts } from './edgeTts';
-import { googleTts, youdaoTts, isLikelyAudio } from './tts';
+import { baiduTts, googleTts, youdaoTts, isLikelyAudio, ttsFailureReason } from './tts';
 import { log } from './logger';
 
-type Engine = 'edge' | 'google';
+type Engine = 'baidu' | 'edge' | 'google';
+type Route = Engine | 'youdao';
+const FAILURE_COOLDOWN_MS = 30_000;
 
 function currentEngine(): Engine {
-  const v = vscode.workspace.getConfiguration('vocab2code').get<string>('engine', 'google');
-  return v === 'edge' ? 'edge' : 'google';
+  const v = vscode.workspace.getConfiguration('vocab2code').get<string>('engine', 'baidu');
+  return v === 'edge' || v === 'google' ? v : 'baidu';
 }
 
 function isWord(text: string): boolean {
@@ -22,42 +24,40 @@ function mapVoiceForEngine(engine: Engine, voice: string, lang: string): string 
     if (voice.includes('Neural')) return voice;
     return lang === 'en-GB' ? 'en-GB-SoniaNeural' : 'en-US-AriaNeural';
   }
-  return voice; // google ignores voice
+  return voice; // HTTP services use the accent, not the individual voice
 }
 
 async function invokeTts(engine: Engine, voice: string, lang: string, text: string): Promise<Buffer> {
   const v = mapVoiceForEngine(engine, voice, lang);
-  if (engine === 'edge') return edgeTts({ text, voice: v, lang });
+  if (engine === 'baidu') return baiduTts(text, lang === 'en-GB' ? 'uk' : 'us');
+  if (engine === 'edge') return edgeTts({ text, voice: v, lang, timeoutMs: 4000 });
   return googleTts(text, lang === 'en-GB' ? 'co.uk' : 'com');
 }
 
-// Fallback chain. Youdao for words only (it 500s on full sentences and costs
-// ~500ms per failed attempt). Sentences go straight to the engine chain.
-async function fetchWithFallback(voice: string, lang: string, text: string): Promise<{ buf: Buffer; engine: string }> {
-  if (isWord(text)) {
-    try {
-      const buf = await youdaoTts(text, lang === 'en-GB' ? 'uk' : 'us');
-      if (isLikelyAudio(buf)) return { buf, engine: 'youdao' };
-      log('youdao non-audio', `${buf.byteLength}B`);
-    } catch (err) {
-      log('youdao fail');
-    }
-  }
+// Youdao only accepts words reliably. Prefer a mainland-accessible sentence
+// route, including when existing users explicitly selected Google or Edge.
+async function fetchWithFallback(voice: string, lang: string, text: string, unavailableUntil: Map<Route, number>): Promise<{ buf: Buffer; engine: string }> {
   const primary = currentEngine();
-  const chain: Engine[] = primary === 'google' ? ['google'] : ['edge', 'google'];
-  let lastErr: unknown = new Error('no engine tried');
+  const chain: Route[] = isWord(text) ? ['youdao'] : [];
+  chain.push(...new Set<Engine>([primary, 'baidu', 'google']));
+  let lastErr: unknown = new Error('Speech routes are temporarily unavailable. Try again shortly.');
   for (const e of chain) {
+    if ((unavailableUntil.get(e) ?? 0) > Date.now()) {
+      log('engine skip', e, 'cooldown');
+      continue;
+    }
+    const started = Date.now();
     try {
-      const buf = await invokeTts(e, voice, lang, text);
-      if (!isLikelyAudio(buf)) {
-        log('engine non-audio', e, `${buf.byteLength}B`);
-        lastErr = new Error(e + ' returned non-audio');
-        continue;
-      }
+      const buf = e === 'youdao'
+        ? await youdaoTts(text, lang === 'en-GB' ? 'uk' : 'us')
+        : await invokeTts(e, voice, lang, text);
+      if (!isLikelyAudio(buf)) throw new Error('non-audio response');
+      unavailableUntil.delete(e);
       return { buf, engine: e };
     } catch (err) {
       lastErr = err;
-      log('engine fail', e);
+      unavailableUntil.set(e, Date.now() + FAILURE_COOLDOWN_MS);
+      log('engine fail', e, ttsFailureReason(err), `${Date.now() - started}ms`, 'cooldown=30s');
     }
   }
   throw lastErr;
@@ -68,6 +68,7 @@ export interface PrefetchItem { text: string; }
 export class AudioCache {
   private cacheDir: string;
   private inflight = new Map<string, Promise<string>>();
+  private unavailableUntil = new Map<Route, number>();
   private queue: { text: string; voice: string; lang: string }[] = [];
   private active = 0;
   private clearing: Promise<void> | undefined;
@@ -110,7 +111,7 @@ export class AudioCache {
     if (existing) return existing;
     const t0 = Date.now();
     const job = (async () => {
-      const { buf, engine } = await fetchWithFallback(voice, lang, text);
+      const { buf, engine } = await fetchWithFallback(voice, lang, text, this.unavailableUntil);
       fs.writeFileSync(p, buf);
       const dt = Date.now() - t0;
       this.stats.fetched++;
@@ -169,6 +170,7 @@ export class AudioCache {
         if (/^[a-f0-9]{40}\.mp3$/.test(name)) fs.unlinkSync(path.join(this.cacheDir, name));
       }
       this.stats = { cached: 0, fetched: 0, failed: 0 };
+      this.unavailableUntil.clear();
     })().finally(() => { this.clearing = undefined; });
     return this.clearing;
   }

@@ -39,7 +39,12 @@ Common settings:
 | `vocab2code.dailyCount` | `20` | Words per day |
 | `vocab2code.knownCooldownDays` | `7` | Days to skip a known word |
 | `vocab2code.audioAccent` | `us` | `us` / `uk` |
+| `vocab2code.engine` | `baidu` | Preferred sentence service: `baidu` / `google` / `edge` |
 | `vocab2code.libraryPaths` | `[]` | Extra library folders or files |
+
+Words use Youdao first; sentences default to Baidu Translate for mainland China connectivity. When Youdao fails, words try the selected engine. Google and Edge fall back to Baidu; Baidu falls back to Google. Failed routes are skipped for 30 seconds. Long sentences are split without truncation, and downloaded audio is cached locally.
+
+If you previously selected Google or Edge, set `vocab2code.engine` to `baidu` to reduce connection waits in mainland China. Run `vocab2code: Show Log` for route timings and error categories (HTTP status, timeout or DNS failure), without vocabulary text.
 
 ## Importing
 
@@ -52,7 +57,7 @@ Imported libraries stay local; `vocab2code: Open User Library Folder` shows them
 
 ## Privacy
 
-Audio preloading is off by default. Playing uncached words or sentences sends that text to unofficial Youdao, Google Translate or Edge read-aloud services. Audio preloading and progress sync are opt-in. See [PRIVACY.md](PRIVACY.md) for data handling and deletion controls.
+Audio preloading is off by default. Playing uncached words or sentences sends that text to unofficial Youdao, Baidu Translate, Google Translate or Edge read-aloud services. Audio preloading and progress sync are opt-in. See [PRIVACY.md](PRIVACY.md) for data handling and deletion controls.
 
 ## Development
 
