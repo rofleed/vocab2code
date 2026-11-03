@@ -40,6 +40,21 @@
 | `vocab2code.knownCooldownDays` | `7` | "认识"的词跳过几天 |
 | `vocab2code.audioAccent` | `us` | `us` 美音 / `uk` 英音 |
 | `vocab2code.libraryPaths` | `[]` | 额外加载的词库目录或文件 |
+| `vocab2code.audioPrefetch` | `false` | 后台预加载今日单词和例句的音频（推荐开启） |
+
+### 音频预加载（推荐开启）
+
+播放过的音频会缓存在本地，再次播放无需联网。但第一次播放某个单词或例句时需要实时下载，网络较慢时要等几秒。
+
+建议开启预加载：打开设置（`Ctrl+,`），搜索 `vocab2code.audioPrefetch` 并勾选；或在 `settings.json` 中加入：
+
+```json
+"vocab2code.audioPrefetch": true
+```
+
+开启后立即生效：扩展会在后台下载当天所有单词和例句的发音，之后在 VS Code 启动、打开今日单词、切换词库或口音时也会自动补齐，之后点 ▶ 基本可以立即播放。注意：开启后这些文本会在你点击播放前就发送给语音服务，详见下方[隐私](#隐私)。
+
+不需要缓存时，执行 `vocab2code: Clear Audio Cache` 可清空。
 
 ## 导入单词表
 

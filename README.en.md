@@ -40,6 +40,21 @@ Common settings:
 | `vocab2code.knownCooldownDays` | `7` | Days to skip a known word |
 | `vocab2code.audioAccent` | `us` | `us` / `uk` |
 | `vocab2code.libraryPaths` | `[]` | Extra library folders or files |
+| `vocab2code.audioPrefetch` | `false` | Preload audio for today's words and examples in the background (recommended) |
+
+### Audio preloading (recommended)
+
+Played audio is cached locally, so replays don't hit the network. The first play of a word or sentence still has to download it, which can take a few seconds on a slow connection.
+
+We recommend turning preloading on: open Settings (`Ctrl+,`), search for `vocab2code.audioPrefetch` and tick it, or add this to `settings.json`:
+
+```json
+"vocab2code.audioPrefetch": true
+```
+
+It takes effect right away: the extension downloads audio for all of today's words and example sentences in the background, and tops it up again on VS Code startup, when you open today's module, or when you switch library or accent. After that, ▶ plays almost instantly. Note that this sends the text to the speech services before you press play; see [Privacy](#privacy).
+
+Run `vocab2code: Clear Audio Cache` to clear the cache.
 
 ## Importing
 
