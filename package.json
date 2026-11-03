@@ -126,16 +126,18 @@
         },
         "vocab2code.engine": {
           "type": "string",
-          "default": "google",
+          "default": "baidu",
           "enum": [
+            "baidu",
             "google",
             "edge"
           ],
           "enumDescriptions": [
-            "Google Translate TTS for sentences (single words still come from Youdao). Robotic but reliable.",
-            "Try Microsoft Edge neural voice for sentences first, fall back to Google. May be slow if Edge auth is broken."
+            "Baidu Translate TTS for sentences. Recommended for mainland China; falls back to Google.",
+            "Google Translate TTS for sentences; falls back to Baidu if unreachable.",
+            "Try Microsoft Edge neural voice first; fall back to Baidu, then Google if authentication or connection fails."
           ],
-          "description": "Sentence TTS backend. Words always use Youdao first."
+          "description": "Preferred sentence TTS backend. Words use Youdao first, then the selected backend and fallback routes. Failed routes are skipped for 30 seconds."
         },
         "vocab2code.voice": {
           "type": "string",
@@ -151,7 +153,7 @@
             "en-GB-RyanNeural",
             "en-GB-LibbyNeural"
           ],
-          "description": "Edge TTS voice. Ignored when engine=google. 'auto' picks per accent."
+          "description": "Speech voice. Edge uses the selected voice; other services use its US/UK accent. 'auto' picks a voice per audioAccent."
         },
         "vocab2code.audioPrefetch": {
           "type": "boolean",

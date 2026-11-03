@@ -33,10 +33,10 @@ export interface EdgeTtsOptions {
 }
 
 export function edgeTts(opts: EdgeTtsOptions): Promise<Buffer> {
-  return tryEdge(opts, false);
+  return tryEdge(opts, false, Date.now() + (opts.timeoutMs ?? 8000));
 }
 
-function tryEdge(opts: EdgeTtsOptions, isRetry: boolean): Promise<Buffer> {
+function tryEdge(opts: EdgeTtsOptions, isRetry: boolean, deadline: number): Promise<Buffer> {
   return new Promise((resolve, reject) => {
     const secMsGec = generateSecMsGec();
     const url = EDGE_WS + '&Sec-MS-GEC=' + secMsGec + '&Sec-MS-GEC-Version=' + SEC_MS_GEC_VERSION + '&ConnectionId=' + randomUUID().replace(/-/g, '');
@@ -56,10 +56,10 @@ function tryEdge(opts: EdgeTtsOptions, isRetry: boolean): Promise<Buffer> {
       if (done) return;
       done = true;
       clearTimeout(timer);
-      try { ws.close(); } catch {}
+      try { ws.terminate(); } catch {}
       reject(err);
     };
-    const timer = setTimeout(() => fail(new Error('timeout')), opts.timeoutMs ?? 8000);
+    const timer = setTimeout(() => fail(new Error('timeout')), Math.max(1, deadline - Date.now()));
 
     ws.on('unexpected-response', (_req, res) => {
       const status = res.statusCode ?? 0;
@@ -75,7 +75,7 @@ function tryEdge(opts: EdgeTtsOptions, isRetry: boolean): Promise<Buffer> {
           done = true;
           clearTimeout(timer);
           try { ws.terminate(); } catch {}
-          tryEdge(opts, true).then(resolve).catch(reject);
+          tryEdge(opts, true, deadline).then(resolve).catch(reject);
           return;
         }
       }
