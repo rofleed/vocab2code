@@ -2,7 +2,7 @@
   "name": "vocab2code",
   "displayName": "vocab2code",
   "description": "写代码时背单词：把每日英语单词伪装成 TypeScript 模块。Vocabulary practice disguised as code.",
-  "version": "0.9.2",
+  "version": "0.9.4",
   "publisher": "rofleed",
   "license": "MIT",
   "icon": "images/icon.png",

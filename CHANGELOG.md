@@ -1,12 +1,10 @@
 # Changelog
 
-## Unreleased
+## 0.9.4 - 2026-11-12
 
 - Default sentence audio to Baidu Translate for mainland China connectivity; retain Youdao for words and add domestic fallbacks for Google/Edge.
 - Skip failed speech routes for 30 seconds, log safe failure categories, bound Edge retries to one timeout budget, and synthesize long sentences without truncation.
-
 - Require VS Code 1.82+ for its Node 18 runtime and built-in fetch API.
-
 - Disable audio preloading and progress sync by default; add explicit opt-in settings.
 - Add commands to clear audio cache, logs, and learning progress.
 - Remove text and remote error details from diagnostic logs.

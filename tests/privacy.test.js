@@ -58,10 +58,11 @@ test('clearing audio waits for active requests and prevents queued files reappea
   const releases = [];
   const logs = [];
   let requests = 0;
+  const pendingAudio = () => { requests++; return new Promise(resolve => releases.push(() => resolve(Buffer.from('ID3test')))); };
   const { AudioCache } = loader({
     vscode: host(), './logger': { log: (...args) => logs.push(args.join(' ')) },
     './edgeTts': {},
-    './tts': { googleTts: () => { requests++; return new Promise(resolve => releases.push(() => resolve(Buffer.from('ID3test')))); }, isLikelyAudio: () => true }
+    './tts': { baiduTts: pendingAudio, googleTts: pendingAudio, isLikelyAudio: () => true, ttsFailureReason: () => 'request failed' }
   })('audioCache');
   const cache = new AudioCache({ globalStorageUri: { fsPath: dir } });
   cache.enqueue('voice', 'en-US', Array.from({ length: 6 }, (_, i) => ({ text: `private example ${i}` })));
@@ -82,7 +83,11 @@ test('failed speech request logs omit text and remote error details', async t =>
   const logs = [];
   const { AudioCache } = loader({
     vscode: host(), './logger': { log: (...args) => logs.push(args.join(' ')) }, './edgeTts': {},
-    './tts': { googleTts: async () => { throw new Error('remote echoed private text'); } }
+    './tts': {
+      baiduTts: async () => { throw new Error('remote echoed private text'); },
+      googleTts: async () => { throw new Error('remote echoed private text'); },
+      ttsFailureReason: () => 'request failed'
+    }
   })('audioCache');
   const cache = new AudioCache({ globalStorageUri: { fsPath: dir } });
   await assert.rejects(cache.fetchAndStore('voice', 'en-US', 'private text'));
